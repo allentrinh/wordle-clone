@@ -37,34 +37,11 @@ const letterClass = (position) => {
 <template>
   <div class="flex gap-2 mb-2">
     <span
+      v-for="i in 5"
       class="flex justify-center items-center border border-gray-700 h-10 w-10 uppercase text-xl font-semibold transition-all"
-      :class="letterClass(0)"
+      :class="letterClass(i - 1)"
     >
-      {{ word[0] }}
-    </span>
-    <span
-      class="flex justify-center items-center border border-gray-700 h-10 w-10 uppercase text-xl font-semibold transition-all"
-      :class="letterClass(1)"
-    >
-      {{ word[1] }}
-    </span>
-    <span
-      class="flex justify-center items-center border border-gray-700 h-10 w-10 uppercase text-xl font-semibold transition-all"
-      :class="letterClass(2)"
-    >
-      {{ word[2] }}
-    </span>
-    <span
-      class="flex justify-center items-center border border-gray-700 h-10 w-10 uppercase text-xl font-semibold transition-all"
-      :class="letterClass(3)"
-    >
-      {{ word[3] }}
-    </span>
-    <span
-      class="flex justify-center items-center border border-gray-700 h-10 w-10 uppercase text-xl font-semibold transition-all"
-      :class="letterClass(4)"
-    >
-      {{ word[4] }}
+      {{ word[i - 1] }}
     </span>
   </div>
 </template>
