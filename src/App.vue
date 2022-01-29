@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, toDisplayString } from "vue";
+import { ref, onMounted } from "vue";
 import WordGrid from "./components/WordGrid.vue";
 import Keyboard from "./components/Keyboard.vue";
 import Toast from "./components/Toast.vue";
@@ -176,7 +176,7 @@ window.addEventListener("keydown", (event) => {
   const key = event.key;
 
   // Game finished, do nothing
-  if (finished.value) return;
+  if (finished.value) initialize();
 
   // Delete a character
   if (key.toLowerCase() === "backspace") {
