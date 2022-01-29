@@ -1,0 +1,8 @@
+{
+  "successMessages": {
+    "correctWord": "You got it!"
+  },
+  "errorMessages": {
+    "invalidWord": "We don't recognize that word."
+  }
+}
