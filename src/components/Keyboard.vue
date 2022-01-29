@@ -27,17 +27,15 @@ const emit = defineEmits(["click"]);
 </script>
 
 <template>
-  <div class="pt-8">
-    <div v-for="(row, i) in keys" :key="`row-${i}`" class="flex justify-center items-center gap-1 mb-1">
-      <button
-        v-for="key in row"
-        :key="key.key"
-        class="rounded transition-all text-white p-3"
-        :class="keyClass(key.key)"
-        @click="$emit('click', key.key)"
-      >
-        {{ key.key }}
-      </button>
-    </div>
+  <div v-for="(row, i) in keys" :key="`row-${i}`" class="flex justify-center items-center gap-1 mb-1">
+    <button
+      v-for="key in row"
+      :key="key.key"
+      class="rounded transition-all text-white p-3"
+      :class="keyClass(key.key)"
+      @click="$emit('click', key.key)"
+    >
+      {{ key.key }}
+    </button>
   </div>
 </template>
