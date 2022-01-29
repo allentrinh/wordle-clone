@@ -2,10 +2,12 @@
 import { ref, onMounted } from "vue";
 import WordGrid from "./components/WordGrid.vue";
 import Keyboard from "./components/Keyboard.vue";
+import Drawer from "./components/Drawer.vue";
 import Toast from "./components/Toast.vue";
 import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
 import feedbackMessages from "./utils/feedback-messages.json";
+import { ChartBarIcon } from "@heroicons/vue/solid";
 
 const secret = ref("");
 const guesses = ref([
@@ -43,6 +45,7 @@ const MAX_ATTEMPTS = 6;
 const toastMessage = ref("");
 const toastType = ref("");
 const toastVisible = ref(false);
+const drawerVisible = ref(true);
 
 const initialize = async () => {
   secret.value = getSecret();
@@ -118,6 +121,11 @@ const triggerToast = (message: string, type: string) => {
   }, 3000);
 };
 
+const addToHistory = (value) => {
+  history.value.push(value);
+  localStorage.history = JSON.stringify(history.value);
+};
+
 const submitWord = () => {
   if (word.value.length !== 5) return;
 
@@ -147,7 +155,7 @@ const submitWord = () => {
   const guessedCorrectly = word.value === secret.value;
   if (attempts.value === MAX_ATTEMPTS || guessedCorrectly) {
     finished.value = true;
-    history.value.push({
+    addToHistory({
       word: secret.value,
       guessedCorrectly,
       attempts: attempts.value,
@@ -203,11 +211,23 @@ const clearHistory = () => (history.value = []);
 
 onMounted(async () => {
   await initialize();
+  if (localStorage.history) {
+    history.value = JSON.parse(localStorage.history);
+  }
 });
 </script>
 
 <template>
   <div class="flex flex-col justify-center items-center min-h-screen w-screen bg-slate-900 py-12 px-4">
+    <div class="fixed top-0 left-0 flex justify-end items-center w-full py-4 px-6">
+      <button class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all" @click="">
+        Login
+      </button>
+      <button class="hover:bg-slate-700 rounded-full transition-all" @click="drawerVisible = true">
+        <div class="sr-only">View scoreboard</div>
+        <ChartBarIcon class="h-8 w-8 p-2 text-white block" />
+      </button>
+    </div>
     <h1 class="mb-6 font-bold text-5xl text-gray-200">Wordle</h1>
     <div class="mb-6">
       <WordGrid
@@ -231,41 +251,36 @@ onMounted(async () => {
       New word
     </button>
 
-    <div
-      class="flex flex-col items-center mt-8 py-6 px-4 rounded shadow-sm bg-slate-800 w-full"
-      style="max-width: 24rem"
-    >
-      <h2 class="mb-4 font-bold text-xl uppercase text-white">Scoreboard</h2>
-      <div v-if="!history.length" class="flex">
-        <p class="text-white">No games played yet</p>
-      </div>
-      <template v-else>
-        <div
-          v-for="item in history"
-          :key="item.secret"
-          class="flex justify-between items-center w-full rounded mb-1 px-2"
-          :class="{ 'bg-red-200': !item.guessedCorrectly, 'bg-green-200': item.guessedCorrectly }"
-        >
-          <p
-            class="py-1 px-2 font-semibold"
-            :class="{ 'text-red-900': !item.guessedCorrectly, 'text-green-900': item.guessedCorrectly }"
-          >
-            {{ item.word.toUpperCase() }}
-          </p>
-          <p
-            class="py-1 px-2 font-semibold"
-            :class="{ 'text-red-900': !item.guessedCorrectly, 'text-green-900': item.guessedCorrectly }"
-          >
-            {{ item.attempts > 1 ? `${item.attempts} guesses` : `1 guess!` }}
-          </p>
-        </div>
-        <!-- <button
-          class="rounded transition-all bg-gray-500 hover:bg-gray-400 text-white font-semibold px-4 py-2 mb-4"
-          @click="clearHistory"
-        >
-          Clear
-        </button> -->
+    <Drawer :visible="drawerVisible" @close="drawerVisible = false">
+      <template v-slot:header>
+        <h2 class="mb-4 font-bold text-xl uppercase text-white">Scoreboard</h2>
       </template>
-    </div>
+      <template v-slot:body>
+        <div v-if="!history.length" class="flex">
+          <p class="text-white">No games played yet</p>
+        </div>
+        <template v-else>
+          <div
+            v-for="item in history"
+            :key="item.secret"
+            class="flex justify-between items-center w-full rounded mb-1 px-2"
+            :class="{ 'bg-red-200': !item.guessedCorrectly, 'bg-green-200': item.guessedCorrectly }"
+          >
+            <p
+              class="py-1 px-2 font-semibold"
+              :class="{ 'text-red-900': !item.guessedCorrectly, 'text-green-900': item.guessedCorrectly }"
+            >
+              {{ item.word.toUpperCase() }}
+            </p>
+            <p
+              class="py-1 px-2 font-semibold"
+              :class="{ 'text-red-900': !item.guessedCorrectly, 'text-green-900': item.guessedCorrectly }"
+            >
+              {{ item.attempts > 1 ? `${item.attempts} guesses` : `1 guess!` }}
+            </p>
+          </div>
+        </template>
+      </template>
+    </Drawer>
   </div>
 </template>
