@@ -209,7 +209,6 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col justify-center items-center min-h-screen w-screen bg-slate-900 py-12 px-4">
     <h1 class="mb-6 font-bold text-5xl text-gray-200">Wordle</h1>
-    {{ secret }}
     <div class="mb-6">
       <WordGrid
         v-for="i in MAX_ATTEMPTS"
