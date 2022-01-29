@@ -1,9 +1,11 @@
-<script setup>
-import { ref, onMounted } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, toDisplayString } from "vue";
 import WordGrid from "./components/WordGrid.vue";
 import Keyboard from "./components/Keyboard.vue";
+import Toast from "./components/Toast.vue";
 import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
+import feedbackMessages from "./utils/feedback-messages.json";
 
 const secret = ref("");
 const guesses = ref([
@@ -38,6 +40,9 @@ const finished = ref(false);
 const history = ref([]);
 const lettersUsed = ref([]);
 const MAX_ATTEMPTS = 6;
+const toastMessage = ref("");
+const toastType = ref("");
+const toastVisible = ref(false);
 
 const initialize = async () => {
   secret.value = getSecret();
@@ -96,8 +101,30 @@ const deleteCharacter = () => {
   };
 };
 
+const isValidWord = (word) => {
+  return data.data.includes(word);
+};
+
+const resetWord = () => {
+  word.value = "";
+};
+
+const triggerToast = (message: string, type: string) => {
+  toastMessage.value = message;
+  toastType.value = type;
+  toastVisible.value = true;
+  setTimeout(() => {
+    toastVisible.value = false;
+  }, 3000);
+};
+
 const submitWord = () => {
   if (word.value.length !== 5) return;
+
+  if (!isValidWord(word.value)) {
+    triggerToast(feedbackMessages.errorMessages.invalidWord, "danger");
+    return;
+  }
 
   guesses.value[attempts.value] = {
     word: word.value,
@@ -127,7 +154,11 @@ const submitWord = () => {
     });
   }
 
-  word.value = "";
+  if (guessedCorrectly) {
+    triggerToast(feedbackMessages.successMessages.correctWord, "success");
+  }
+
+  resetWord();
 };
 
 const appendLetter = (key) => {
@@ -178,19 +209,24 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col justify-center items-center min-h-screen w-screen bg-slate-900 py-12 px-4">
     <h1 class="mb-6 font-bold text-5xl text-gray-200">Wordle</h1>
-    <WordGrid
-      v-for="i in MAX_ATTEMPTS"
-      :key="i"
-      :word="guesses[i - 1].word"
-      :submitted="guesses[i - 1].submitted"
-      :secret="secret"
-    ></WordGrid>
+    {{ secret }}
+    <div class="mb-6">
+      <WordGrid
+        v-for="i in MAX_ATTEMPTS"
+        :key="i"
+        :word="guesses[i - 1].word"
+        :submitted="guesses[i - 1].submitted"
+        :secret="secret"
+      ></WordGrid>
+    </div>
+
+    <Toast :message="toastMessage" :type="toastType" :visible="toastVisible"></Toast>
 
     <Keyboard :letters-used="lettersUsed" @click="submitKey" />
 
     <button
       v-if="finished"
-      class="rounded bg-cyan-600 text-white font-semibold uppercase py-4 px-6 text-3xl"
+      class="rounded bg-cyan-600 text-white font-semibold uppercase py-2 px-6 text-lg"
       @click="initialize"
     >
       New word
