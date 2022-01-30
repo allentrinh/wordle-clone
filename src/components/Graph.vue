@@ -23,7 +23,7 @@ const winPercentage = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-start">
+  <div class="flex flex-col items-start pb-4">
     <h2 class="text-white font-bold text-xl uppercase mb-2">Stats</h2>
 
     <div class="flex justify-items-stretch gap-2 w-full mb-4">
