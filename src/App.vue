@@ -116,9 +116,9 @@ const resetWord = () => {
   word.value = "";
 };
 
-const triggerToast = (message: string, type: string) => {
-  toastMessage.value = message;
-  toastType.value = type;
+const triggerToast = (payload: { message: string; type: string }) => {
+  toastMessage.value = payload.message;
+  toastType.value = payload.type;
   toastVisible.value = true;
   setTimeout(() => {
     toastVisible.value = false;
@@ -134,7 +134,7 @@ const submitWord = () => {
   if (word.value.length !== 5) return;
 
   if (!isValidWord(word.value)) {
-    triggerToast(feedbackMessages.errorMessages.invalidWord, "danger");
+    triggerToast({ message: feedbackMessages.errorMessages.invalidWord, type: "danger" });
     return;
   }
 
@@ -167,7 +167,7 @@ const submitWord = () => {
   }
 
   if (solved) {
-    triggerToast(feedbackMessages.successMessages.correctWord, "success");
+    triggerToast({ message: feedbackMessages.successMessages.correctWord, type: "success" });
   }
 
   resetWord();
@@ -217,8 +217,9 @@ const clearHistory = () => (store.history = []);
 
 const signOut = async () => {
   await supabase.auth.signOut();
-  store.user = {};
+  store.user = null;
   clearHistory();
+  triggerToast({ message: "Have a good one!", type: "success" });
 };
 
 onMounted(async () => {
@@ -303,7 +304,7 @@ onMounted(async () => {
 
     <Modal :visible="loginVisible" @close="loginVisible = false">
       <template v-slot:body>
-        <LoginForm @close="loginVisible = false" />
+        <LoginForm @close="loginVisible = false" @toast="triggerToast" />
       </template>
     </Modal>
   </div>

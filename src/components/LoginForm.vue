@@ -28,9 +28,10 @@ const signIn = async () => {
     if (!error) {
       const games = await fetchGames();
       setHistory(games);
+      emit("toast", { message: "You're logged in!", type: "success" });
       emit("close");
     } else {
-      errorMessage.value = error.message;
+      emit("toast", { message: error.message, type: "danger" });
     }
   } catch (error) {
     console.error(error);
@@ -50,6 +51,7 @@ const signUp = async () => {
     store.user = user;
     if (!error) {
       emit("close");
+      emit("toast", { message: "Thanks for signing up! Don't forget to confirm your email.", type: "success" });
     }
   } catch (error) {
     console.error(error);
@@ -72,7 +74,7 @@ const toggleCreateAccount = () => {
   shouldCreateAccount.value = !shouldCreateAccount.value;
 };
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "toast"]);
 </script>
 
 <template>
@@ -112,9 +114,6 @@ const emit = defineEmits(["close"]);
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
           />
         </template>
-        <p v-if="errorMessage" class="text-red-900 mb-3 py-1 px-2 bg-red-100 rounded flex items-center">
-          <ExclamationCircleIcon class="w-4 h-4 inline mr-2" />{{ errorMessage }}
-        </p>
       </fieldset>
       <div class="flex justify-between">
         <button

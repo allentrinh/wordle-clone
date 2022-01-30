@@ -15,7 +15,7 @@ const props = defineProps({
 const colors = computed(() => {
   switch (props.type) {
     case "danger":
-      return "bg-red-400 text-red-900";
+      return "bg-red-300 text-black";
 
     case "success":
       return "bg-green-400 text-black";
@@ -28,7 +28,7 @@ const visibility = computed(() => {
 </script>
 
 <template>
-  <div class="rounded py-2 px-6 mb-6 fixed bottom-4 transition-all" :class="[colors, visibility]">
+  <div class="rounded py-2 px-6 mb-6 fixed bottom-4 transition-all z-50" :class="[colors, visibility]">
     {{ props.message }}
   </div>
 </template>
