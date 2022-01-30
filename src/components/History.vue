@@ -10,7 +10,6 @@ const items = computed(() => {
 
   const data = [];
   let i = 0;
-  console.log(`should show up to ${pages.value * itemsPerPage}`);
   while (data.length < pages.value * itemsPerPage && i != items.length) {
     data.push(items[i]);
     i++;

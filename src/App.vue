@@ -286,7 +286,7 @@ onMounted(async () => {
         <ChartBarIcon class="h-8 w-8 p-2 text-white block" />
       </button>
     </div>
-    <h1 class="mb-6 font-bold text-5xl text-gray-200">Wordle</h1>
+    <h1 class="mb-6 font-bold text-5xl text-gray-200">Diction</h1>
     <div class="mb-6">
       <WordGrid
         v-for="i in MAX_ATTEMPTS"
