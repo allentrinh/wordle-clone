@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps } from "vue";
 import { checkLetter } from "../modules/check-letter";
 
 const props = defineProps({

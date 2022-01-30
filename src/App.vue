@@ -53,6 +53,7 @@ const isToastVisible = ref(false);
 const isDrawerVisible = ref(false);
 const isLoginVisible = ref(false);
 const isHelpVisible = ref(false);
+const isSignOutVisible = ref(false);
 const date = new Date();
 const helpTips = [
   {
@@ -291,7 +292,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col justify-between items-center min-h-screen w-screen bg-slate-900 px-4">
+  <div class="flex flex-col justify-between items-center min-h-screen w-screen bg-slate-900">
     <header class="flex justify-between items-center w-full py-4 px-6">
       <button
         class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
@@ -310,9 +311,9 @@ onMounted(async () => {
         <div v-else>
           <button
             class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
-            @click="signOut()"
+            @click="isSignOutVisible = true"
           >
-            Logged in as {{ store.user.email }}
+            Sign out
           </button>
         </div>
         <button class="hover:bg-slate-700 rounded-full transition-all" @click="isDrawerVisible = true">
@@ -408,8 +409,34 @@ onMounted(async () => {
             </p>
           </div>
         </div>
-        <p class="text-white mb-4">Have fun!</p></template
-      >
+        <p class="text-white mb-4">Have fun!</p>
+      </template>
+    </Modal>
+
+    <Modal :visible="isSignOutVisible" size="sm" @close="isSignOutVisible = false">
+      <template v-slot:header>
+        <h2 class="text-white font-bold text-xl mb-4 flex items-end">Are you sure you want to sign out?</h2>
+      </template>
+
+      <template v-slot:body>
+        <div class="flex justify-end">
+          <button
+            class="text-white border font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
+            @click="isSignOutVisible = false"
+          >
+            Cancel
+          </button>
+          <button
+            class="text-white font-semibold py-1 px-4 mr-1 rounded-full bg-cyan-700 hover:bg-cyan-600 active:bg-cyan-800 transition-all"
+            @click="
+              isSignOutVisible = false;
+              signOut();
+            "
+          >
+            Yes, sign out
+          </button>
+        </div>
+      </template>
     </Modal>
   </div>
 </template>
