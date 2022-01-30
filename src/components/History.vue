@@ -42,7 +42,11 @@ const items = computed(() => {
       >
         Load more
       </button>
-      <button class="rounded border border-white text-white font-semibold uppercase py-2 px-6 grow" @click="pages = 1">
+      <button
+        v-if="items.length > 5"
+        class="rounded border border-white text-white font-semibold uppercase py-2 px-6 grow"
+        @click="pages = 1"
+      >
         Show less
       </button>
     </div>
