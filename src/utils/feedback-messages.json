@@ -4,6 +4,7 @@
   },
   "errorMessages": {
     "invalidWord": "We don't recognize that word.",
-    "invalidLength": "Word not long enough."
+    "invalidLength": "Word not long enough.",
+    "passwordsMatch": "Passwords don't match."
   }
 }

@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { UserAddIcon, ExclamationCircleIcon } from "@heroicons/vue/solid";
 import { supabase, fetchGames } from "../services/Supabase";
 import { store, setHistory } from "../store";
+import feedbackMessages from "../utils/feedback-messages.json";
 
 const form = ref({
   email: "",
@@ -40,7 +41,8 @@ const signIn = async () => {
 
 const signUp = async () => {
   if (form.value.password !== form.value.confirm) {
-    throw new Error("match passwords");
+    emit("toast", { message: feedbackMessages.errorMessages.passwordsMatch, type: "danger" });
+    return;
   }
 
   try {
