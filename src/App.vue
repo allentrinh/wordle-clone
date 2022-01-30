@@ -11,7 +11,7 @@ import LoginForm from "./components/LoginForm.vue";
 import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
 import feedbackMessages from "./utils/feedback-messages.json";
-import { ChartBarIcon } from "@heroicons/vue/solid";
+import { ChartBarIcon, HeartIcon } from "@heroicons/vue/solid";
 import { supabase, fetchGames, insert } from "./services/Supabase";
 import { store, setHistory } from "./store";
 
@@ -49,9 +49,28 @@ const lettersUsed = ref([]);
 const MAX_ATTEMPTS = 6;
 const toastMessage = ref("");
 const toastType = ref("");
-const toastVisible = ref(false);
-const drawerVisible = ref(false);
-const loginVisible = ref(false);
+const isToastVisible = ref(false);
+const isDrawerVisible = ref(false);
+const isLoginVisible = ref(false);
+const isHelpVisible = ref(false);
+const date = new Date();
+const helpTips = [
+  {
+    color: "green",
+    shade: 500,
+    tip: "This letter is in the word and in the correct spot",
+  },
+  {
+    color: "yellow",
+    shade: 400,
+    tip: "This letter is in the word, but not in the correct spot",
+  },
+  {
+    color: "gray",
+    shade: 500,
+    tip: "This letter not in the word",
+  },
+];
 
 const initialize = async () => {
   secret.value = localStorage.secret ? atob(localStorage.secret) : getSecret();
@@ -110,6 +129,11 @@ const clearSteps = () => {
 const getSecret = () => data.data[Math.ceil(Math.random() * data.data.length)];
 
 const submitKey = (key) => {
+  if (finished.value) {
+    initialize();
+    return;
+  }
+
   switch (key) {
     case "backspace":
       deleteCharacter();
@@ -141,9 +165,9 @@ const resetWord = () => {
 const triggerToast = (payload: { message: string; type: string }) => {
   toastMessage.value = payload.message;
   toastType.value = payload.type;
-  toastVisible.value = true;
+  isToastVisible.value = true;
   setTimeout(() => {
-    toastVisible.value = false;
+    isToastVisible.value = false;
   }, 3000);
 };
 
@@ -217,12 +241,15 @@ const appendLetter = (key) => {
 };
 
 window.addEventListener("keydown", (event) => {
-  if (loginVisible.value) return;
+  if (isLoginVisible.value) return;
 
   const key = event.key;
 
   // Game finished, initialize
-  if (finished.value) initialize();
+  if (finished.value) {
+    initialize();
+    return;
+  }
 
   // Delete a character
   if (key.toLowerCase() === "backspace") {
@@ -264,52 +291,79 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col justify-center items-center min-h-screen w-screen bg-slate-900 py-12 px-4">
-    <div class="fixed top-0 left-0 flex justify-end items-center w-full py-4 px-6">
+  <div class="flex flex-col justify-between items-center min-h-screen w-screen bg-slate-900 px-4">
+    <header class="flex justify-between items-center w-full py-4 px-6">
       <button
-        v-if="!store.user"
         class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
-        @click="loginVisible = true"
+        @click="isHelpVisible = true"
       >
-        Login
+        How to play
       </button>
-      <div v-else>
+      <div class="flex justify-between items-center">
         <button
+          v-if="!store.user"
           class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
-          @click="signOut()"
+          @click="isLoginVisible = true"
         >
-          Logged in as {{ store.user.email }}
+          Login
+        </button>
+        <div v-else>
+          <button
+            class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
+            @click="signOut()"
+          >
+            Logged in as {{ store.user.email }}
+          </button>
+        </div>
+        <button class="hover:bg-slate-700 rounded-full transition-all" @click="isDrawerVisible = true">
+          <div class="sr-only">View scoreboard</div>
+          <ChartBarIcon class="h-8 w-8 p-2 text-white block" />
         </button>
       </div>
-      <button class="hover:bg-slate-700 rounded-full transition-all" @click="drawerVisible = true">
-        <div class="sr-only">View scoreboard</div>
-        <ChartBarIcon class="h-8 w-8 p-2 text-white block" />
+    </header>
+
+    <main class="flex flex-col justify-center items-center">
+      <h1 class="mb-6 font-bold text-5xl text-gray-200">A Diction</h1>
+      <div class="mb-6">
+        <WordGrid
+          v-for="i in MAX_ATTEMPTS"
+          :key="i"
+          :word="guesses[i - 1].word"
+          :submitted="guesses[i - 1].submitted"
+          :secret="secret"
+        ></WordGrid>
+      </div>
+
+      <Toast :message="toastMessage" :type="toastType" :visible="isToastVisible"></Toast>
+
+      <Keyboard :letters-used="lettersUsed" @click="submitKey" />
+
+      <button
+        v-if="finished"
+        class="rounded bg-cyan-700 text-white font-semibold uppercase py-2 px-6 text-lg"
+        @click="initialize"
+      >
+        New word
       </button>
-    </div>
-    <h1 class="mb-6 font-bold text-5xl text-gray-200">Diction</h1>
-    <div class="mb-6">
-      <WordGrid
-        v-for="i in MAX_ATTEMPTS"
-        :key="i"
-        :word="guesses[i - 1].word"
-        :submitted="guesses[i - 1].submitted"
-        :secret="secret"
-      ></WordGrid>
-    </div>
+    </main>
 
-    <Toast :message="toastMessage" :type="toastType" :visible="toastVisible"></Toast>
+    <footer class="py-4 px-6 flex flex-col items-center">
+      <p class="text-white">
+        &copy; {{ date.getFullYear() }} - Made with love by
+        <a href="https://allentrinh.com" class="underline" target="_blank">Allen Trinh</a>
+      </p>
+      <p>
+        <a
+          href="https://www.paypal.com/donate/?business=MTVYUAT6RSYJ4&no_recurring=1&item_name=Send+me+a+coffee+to+keep+me+coding.&currency_code=USD"
+          class="text-white underline"
+          target="_blank"
+        >
+          Buy me a coffee <HeartIcon class="w-4 h-4 text-white inline" />
+        </a>
+      </p>
+    </footer>
 
-    <Keyboard :letters-used="lettersUsed" @click="submitKey" />
-
-    <button
-      v-if="finished"
-      class="rounded bg-cyan-600 text-white font-semibold uppercase py-2 px-6 text-lg"
-      @click="initialize"
-    >
-      New word
-    </button>
-
-    <Drawer :visible="drawerVisible" @close="drawerVisible = false">
+    <Drawer :visible="isDrawerVisible" @close="isDrawerVisible = false">
       <template v-slot:header>
         <h2 class="mb-4 font-bold text-xl uppercase text-white">Scoreboard</h2>
       </template>
@@ -328,10 +382,34 @@ onMounted(async () => {
       </template>
     </Drawer>
 
-    <Modal :visible="loginVisible" @close="loginVisible = false">
+    <Modal :visible="isLoginVisible" @close="isLoginVisible = false">
       <template v-slot:body>
-        <LoginForm @close="loginVisible = false" @toast="triggerToast" />
+        <LoginForm @close="isLoginVisible = false" @toast="triggerToast" />
       </template>
+    </Modal>
+
+    <Modal :visible="isHelpVisible" size="sm" @close="isHelpVisible = false">
+      <template v-slot:header>
+        <h2 class="text-white font-bold text-xl mb-2 flex items-end">How to play</h2>
+      </template>
+
+      <template v-slot:body>
+        <p class="text-white mb-4">A super simple and casual game!</p>
+        <p class="text-white mb-4">You have 6 attempts to guess the word correctly.</p>
+        <p class="text-white mb-4">
+          Each attempt must have 5 letters. Hit the enter button to see if you got it right!
+        </p>
+        <p class="text-white mb-4">After each submission, we'll let you know how close each letter is.</p>
+        <div class="p-4 pb-1 bg-slate-900 rounded mb-4">
+          <div v-for="tip in helpTips" :key="tip.color" class="flex mb-4 items-center">
+            <span class="block rounded w-8 h-8 mr-2 shrink-0" :class="`bg-${tip.color}-${tip.shade}`"></span>
+            <p class="text-white leading-none">
+              <span class="sr-only">{{ tip.color }} means</span> {{ tip.tip }}
+            </p>
+          </div>
+        </div>
+        <p class="text-white mb-4">Have fun!</p></template
+      >
     </Modal>
   </div>
 </template>
