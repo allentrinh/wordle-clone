@@ -46,8 +46,8 @@ const getCountOfAttempts = (attempts) => {
 
     <h2 class="text-white font-bold text-xl uppercase mb-2">Guess distribution</h2>
     <div v-for="i in 6" :key="i" class="text-white mb-1 flex justify-start items-center w-full">
-      <span class="text-lg font-semibold mr-2">{{ i }}</span>
-      <span class="bg-cyan-700 px-2 rounded text-right" :style="`width: ${getPercentage(i)}%`">{{
+      <span class="text-lg font-semibold mr-3 w-3 text-right">{{ i }}</span>
+      <span class="bg-cyan-700 pl-2 pr-4 rounded text-right" :style="`width: ${getPercentage(i)}%`">{{
         getCountOfAttempts(i)
       }}</span>
     </div>
