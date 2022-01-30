@@ -23,7 +23,7 @@ const colors = computed(() => {
 });
 
 const visibility = computed(() => {
-  return props.visible ? "opacity-100" : "opacity-0";
+  return props.visible ? "opacity-100" : "opacity-0 translate-y-8";
 });
 </script>
 
