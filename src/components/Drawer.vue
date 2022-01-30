@@ -43,7 +43,7 @@ window.addEventListener("keydown", (event) => {
     class="fixed z-10 flex flex-col items-center pt-16 pb-4 px-4 bg-slate-800 max-w-sm w-full h-screen overflow-y-auto transition-all"
     :class="drawerClass"
   >
-    <button class="absolute top-2 right-2 text-3xl text-white" @click="emit('close')">
+    <button class="absolute top-2 right-4 text-3xl text-white" @click="emit('close')">
       <span class="sr-only">Close drawer</span>
       &times;
     </button>
