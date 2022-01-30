@@ -33,6 +33,10 @@ window.addEventListener("keydown", (event) => {
     class="fixed rounded top-1/2 left-1/2 shadow-md bg-slate-800 py-8 px-6 w-full h-auto -translate-x-1/2 -translate-y-1/2"
     :class="`max-w-${props.size}`"
   >
+    <button class="absolute top-2 right-4 text-3xl text-white" @click="emit('close')">
+      <span class="sr-only">Close drawer</span>
+      &times;
+    </button>
     <slot name="header" />
     <slot name="body" />
     <slot name="footer" />
