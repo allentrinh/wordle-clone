@@ -14,6 +14,7 @@ import feedbackMessages from "./utils/feedback-messages.json";
 import { ChartBarIcon, HeartIcon } from "@heroicons/vue/solid";
 import { supabase, fetchGames, insert } from "./services/Supabase";
 import { store, setHistory } from "./store";
+import axios from "axios";
 
 const secret = ref("");
 const guesses = ref([
@@ -155,8 +156,10 @@ const deleteCharacter = () => {
   };
 };
 
-const isValidWord = (word) => {
-  return data.data.includes(word);
+const isValidWord = async (word) => {
+  const endpoint = "https://www.merriam-webster.com/dictionary";
+  const response = await fetch(`${endpoint}/${word}`);
+  return response.status === 200;
 };
 
 const resetWord = () => {
@@ -192,13 +195,14 @@ const addToLettersUsed = () => {
   });
 };
 
-const submitWord = () => {
+const submitWord = async () => {
   if (word.value.length !== 5) {
     triggerToast({ message: feedbackMessages.errorMessages.invalidLength, type: "warning" });
     return;
   }
 
-  if (!isValidWord(word.value)) {
+  const isValid = await isValidWord(word.value);
+  if (!isValid) {
     triggerToast({ message: feedbackMessages.errorMessages.invalidWord, type: "danger" });
     return;
   }
