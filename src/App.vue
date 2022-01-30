@@ -168,7 +168,10 @@ const addToLettersUsed = () => {
 };
 
 const submitWord = () => {
-  if (word.value.length !== 5) return;
+  if (word.value.length !== 5) {
+    triggerToast({ message: feedbackMessages.errorMessages.invalidLength, type: "warning" });
+    return;
+  }
 
   if (!isValidWord(word.value)) {
     triggerToast({ message: feedbackMessages.errorMessages.invalidWord, type: "danger" });
@@ -192,10 +195,11 @@ const submitWord = () => {
       attempts: attempts.value,
     });
     clearSteps();
-  }
-
-  if (solved) {
-    triggerToast({ message: feedbackMessages.successMessages.correctWord, type: "success" });
+    if (solved) {
+      triggerToast({ message: feedbackMessages.successMessages.correctWord, type: "success" });
+    } else {
+      triggerToast({ message: `The word was ${secret.value.toUpperCase()}`, type: "danger" });
+    }
   }
 
   resetWord();

@@ -3,6 +3,7 @@
     "correctWord": "You got it!"
   },
   "errorMessages": {
-    "invalidWord": "We don't recognize that word."
+    "invalidWord": "We don't recognize that word.",
+    "invalidLength": "Word not long enough."
   }
 }

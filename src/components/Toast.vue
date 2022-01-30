@@ -19,6 +19,9 @@ const colors = computed(() => {
 
     case "success":
       return "bg-green-400 text-black";
+
+    case "warning":
+      return "bg-yellow-200 text-yellow-900";
   }
 });
 
