@@ -7,7 +7,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const fetchGames = async () => {
   if (!supabase.auth.user()) return { data: [] };
-  return await supabase.from("games").select().eq("user_id", supabase.auth.user().id).order("id", { ascending: true });
+  return await supabase.from("games").select().eq("user_id", supabase.auth.user().id).order("id", { ascending: false });
 };
 
 export const insert = async (table: string, payload: object) => {
