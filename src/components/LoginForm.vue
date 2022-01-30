@@ -85,7 +85,7 @@ const emit = defineEmits(["close", "toast"]);
         {{ shouldCreateAccount ? "Sign up" : "Login" }}
       </h2>
       <p v-if="shouldCreateAccount" class="text-white">Create an account to save your game data</p>
-      <p v-else class="text-white">Log in with a link to your email</p>
+      <p v-else class="text-white">Log in with your email and password</p>
     </div>
     <form @submit.prevent="handleSubmit">
       <fieldset>
