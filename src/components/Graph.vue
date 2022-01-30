@@ -18,8 +18,12 @@ const getPercentage = (attempts: number) => {
 
 const winPercentage = computed(() => {
   const solvedGames = props.items.filter((item) => item.solved);
-  return (solvedGames.length / props.items.length) * 100;
+  return ((solvedGames.length / props.items.length) * 100).toFixed(2);
 });
+
+const getCountOfAttempts = (attempts) => {
+  return props.items.filter((item) => item.attempts === attempts).length;
+};
 </script>
 
 <template>
@@ -41,13 +45,11 @@ const winPercentage = computed(() => {
     </div>
 
     <h2 class="text-white font-bold text-xl uppercase mb-2">Guess distribution</h2>
-    <div
-      v-for="i in 6"
-      :key="i"
-      class="bg-cyan-700 bg text-white mb-1 pl-2 pr-4 text-lg font-semibold rounded"
-      :style="`width: ${getPercentage(i)}%`"
-    >
-      {{ i }}
+    <div v-for="i in 6" :key="i" class="text-white mb-1 flex justify-start items-center w-full">
+      <span class="text-lg font-semibold mr-2">{{ i }}</span>
+      <span class="bg-cyan-700 px-2 rounded text-right" :style="`width: ${getPercentage(i)}%`">{{
+        getCountOfAttempts(i)
+      }}</span>
     </div>
   </div>
 </template>
