@@ -3,11 +3,15 @@ import { ref, onMounted } from "vue";
 import WordGrid from "./components/WordGrid.vue";
 import Keyboard from "./components/Keyboard.vue";
 import Drawer from "./components/Drawer.vue";
+import Modal from "./components/Modal.vue";
 import Toast from "./components/Toast.vue";
+import LoginForm from "./components/LoginForm.vue";
 import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
 import feedbackMessages from "./utils/feedback-messages.json";
 import { ChartBarIcon } from "@heroicons/vue/solid";
+import { supabase } from "./services/Supabase";
+import { store } from "./store";
 
 const secret = ref("");
 const guesses = ref([
@@ -45,7 +49,8 @@ const MAX_ATTEMPTS = 6;
 const toastMessage = ref("");
 const toastType = ref("");
 const toastVisible = ref(false);
-const drawerVisible = ref(true);
+const drawerVisible = ref(false);
+const loginVisible = ref(false);
 
 const initialize = async () => {
   secret.value = getSecret();
@@ -181,6 +186,8 @@ const appendLetter = (key) => {
 };
 
 window.addEventListener("keydown", (event) => {
+  if (loginVisible.value) return;
+
   const key = event.key;
 
   // Game finished, do nothing
@@ -209,20 +216,41 @@ window.addEventListener("keydown", (event) => {
 
 const clearHistory = () => (history.value = []);
 
+const signOut = async () => {
+  await supabase.auth.signOut();
+  store.user = {};
+  console.log("signed out");
+};
+
 onMounted(async () => {
   await initialize();
+
   if (localStorage.history) {
     history.value = JSON.parse(localStorage.history);
   }
+
+  store.user = supabase.auth.user();
 });
 </script>
 
 <template>
   <div class="flex flex-col justify-center items-center min-h-screen w-screen bg-slate-900 py-12 px-4">
     <div class="fixed top-0 left-0 flex justify-end items-center w-full py-4 px-6">
-      <button class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all" @click="">
+      <button
+        v-if="!store.user.id"
+        class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
+        @click="loginVisible = true"
+      >
         Login
       </button>
+      <div v-else>
+        <button
+          class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
+          @click="signOut()"
+        >
+          Logged in as {{ store.user.email }}
+        </button>
+      </div>
       <button class="hover:bg-slate-700 rounded-full transition-all" @click="drawerVisible = true">
         <div class="sr-only">View scoreboard</div>
         <ChartBarIcon class="h-8 w-8 p-2 text-white block" />
@@ -282,5 +310,11 @@ onMounted(async () => {
         </template>
       </template>
     </Drawer>
+
+    <Modal :visible="loginVisible" @close="loginVisible = false">
+      <template v-slot:body>
+        <LoginForm @close="loginVisible = false" />
+      </template>
+    </Modal>
   </div>
 </template>

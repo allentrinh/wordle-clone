@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   position: {
@@ -25,7 +25,6 @@ const emit = defineEmits(["close"]);
 window.addEventListener("keydown", (event) => {
   const key = event.key.toLowerCase();
 
-  console.log({ key });
   if (key !== "escape") return;
 
   emit("close");

@@ -1,12 +1,12 @@
 <script setup>
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   message: String,
   type: {
     type: String,
     validator: (value) => {
-      return ["danger", "warning", "info", "success"].includes(value);
+      return ["danger", "warning", "info", "success", ""].includes(value);
     },
   },
   visible: Boolean,

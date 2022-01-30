@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@heroicons/vue": "^1.0.5",
+    "@supabase/supabase-js": "^1.29.4",
     "axios": "^0.25.0",
     "vue": "^3.2.25",
-    "vue-axios": "^3.4.0"
+    "vue-axios": "^3.4.0",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.0.0",
