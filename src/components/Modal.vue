@@ -1,6 +1,13 @@
 <script setup>
 const props = defineProps({
   visible: Boolean,
+  size: {
+    type: String,
+    default: () => "sm",
+    validator: (value) => {
+      return ["sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl", "7xl"].includes(value);
+    },
+  },
 });
 
 const emit = defineEmits(["close"]);
@@ -23,7 +30,8 @@ window.addEventListener("keydown", (event) => {
   </button>
   <div
     v-if="props.visible"
-    class="fixed rounded top-1/2 left-1/2 mx-auto shadow-md bg-slate-800 py-8 px-6 max-w-sm w-full h-auto -translate-x-1/2 -translate-y-1/2"
+    class="fixed rounded top-1/2 left-1/2 shadow-md bg-slate-800 py-8 px-6 w-full h-auto -translate-x-1/2 -translate-y-1/2"
+    :class="`max-w-${props.size}`"
   >
     <slot name="header" />
     <slot name="body" />

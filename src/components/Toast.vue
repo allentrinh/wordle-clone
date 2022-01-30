@@ -31,7 +31,10 @@ const visibility = computed(() => {
 </script>
 
 <template>
-  <div class="rounded py-2 px-6 mb-6 fixed bottom-4 transition-all z-50" :class="[colors, visibility]">
+  <div
+    class="rounded py-2 px-6 mb-6 fixed bottom-4 transition-all z-50 pointer-events-none"
+    :class="[colors, visibility]"
+  >
     {{ props.message }}
   </div>
 </template>
