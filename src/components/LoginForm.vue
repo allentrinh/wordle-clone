@@ -1,8 +1,8 @@
 <script setup>
 import { ref, watch } from "vue";
 import { UserAddIcon, ExclamationCircleIcon } from "@heroicons/vue/solid";
-import { supabase } from "../services/Supabase";
-import { store } from "../store";
+import { supabase, fetchGames } from "../services/Supabase";
+import { store, setHistory } from "../store";
 
 const form = ref({
   email: "",
@@ -26,6 +26,8 @@ const signIn = async () => {
     });
     store.user = user;
     if (!error) {
+      const games = await fetchGames();
+      setHistory(games);
       emit("close");
     } else {
       errorMessage.value = error.message;
