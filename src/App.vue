@@ -5,6 +5,7 @@ import Keyboard from "./components/Keyboard.vue";
 import Drawer from "./components/Drawer.vue";
 import Modal from "./components/Modal.vue";
 import Toast from "./components/Toast.vue";
+import Graph from "./components/Graph.vue";
 import LoginForm from "./components/LoginForm.vue";
 import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
@@ -285,18 +286,29 @@ onMounted(async () => {
           <p class="text-white">No games played yet</p>
         </div>
         <template v-else>
-          <div
-            v-for="item in store.history"
-            :key="item.word"
-            class="flex justify-between items-center w-full rounded mb-1 px-2"
-            :class="{ 'bg-red-200': !item.solved, 'bg-green-200': item.solved }"
-          >
-            <p class="py-1 px-2 font-semibold" :class="{ 'text-red-900': !item.solved, 'text-green-900': item.solved }">
-              {{ item.word.toUpperCase() }}
-            </p>
-            <p class="py-1 px-2 font-semibold" :class="{ 'text-red-900': !item.solved, 'text-green-900': item.solved }">
-              {{ item.attempts > 1 ? `${item.attempts} guesses` : `1 guess!` }}
-            </p>
+          <div class="flex flex-col justify-between w-full h-full">
+            <div class="mb-6">
+              <div
+                v-for="item in store.history"
+                :key="item.word"
+                class="flex justify-between items-center w-full rounded mb-1 px-2"
+                :class="{ 'bg-red-200': !item.solved, 'bg-green-200': item.solved }"
+              >
+                <p
+                  class="py-1 px-2 font-semibold"
+                  :class="{ 'text-red-900': !item.solved, 'text-green-900': item.solved }"
+                >
+                  {{ item.word.toUpperCase() }}
+                </p>
+                <p
+                  class="py-1 px-2 font-semibold"
+                  :class="{ 'text-red-900': !item.solved, 'text-green-900': item.solved }"
+                >
+                  {{ item.attempts > 1 ? `${item.attempts} guesses` : `1 guess!` }}
+                </p>
+              </div>
+            </div>
+            <Graph :items="store.history" />
           </div>
         </template>
       </template>
