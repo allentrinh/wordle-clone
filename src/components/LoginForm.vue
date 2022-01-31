@@ -119,7 +119,7 @@ const emit = defineEmits(["close", "toast"]);
       </fieldset>
       <div class="flex justify-between">
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          class="text-white font-semibold py-2 px-6 mr-1 rounded-full bg-cyan-700 hover:bg-cyan-600 active:bg-cyan-800 transition-all"
           type="submit"
         >
           {{ shouldCreateAccount ? "Sign up" : "Login" }}
