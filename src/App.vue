@@ -14,7 +14,6 @@ import feedbackMessages from "./utils/feedback-messages.json";
 import { ChartBarIcon, HeartIcon } from "@heroicons/vue/solid";
 import { supabase, fetchGames, insert } from "./services/Supabase";
 import { store, setHistory } from "./store";
-import axios from "axios";
 
 const secret = ref("");
 const guesses = ref([
@@ -130,6 +129,8 @@ const clearSteps = () => {
 
 const getSecret = () => data.data[Math.ceil(Math.random() * data.data.length)];
 
+const getAHint = () => alert("get a hint");
+
 const submitKey = (key) => {
   if (finished.value) {
     initialize();
@@ -143,6 +144,8 @@ const submitKey = (key) => {
     case "enter":
       submitWord();
       break;
+    case "hint":
+      getAHint();
     default:
       appendLetter(key);
   }

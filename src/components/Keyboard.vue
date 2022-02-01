@@ -2,6 +2,7 @@
 import { defineEmits, defineProps } from "vue";
 import keys from "../assets/data/keys.json";
 import { checkLetter } from "../modules/check-letter";
+import { LightBulbIcon } from "@heroicons/vue/solid";
 
 const props = defineProps({
   lettersUsed: Array,
@@ -36,6 +37,27 @@ const emit = defineEmits(["click"]);
       @click="$emit('click', key.key)"
     >
       {{ key.key }}
+    </button>
+  </div>
+  <div class="flex justify-center items-center gap-1 mb-1">
+    <button
+      class="bg-slate-800 hover:bg-slate-700 active:bg-slate-900 rounded transition-all text-white p-3"
+      @click="$emit('click', 'backspace')"
+    >
+      backspace
+    </button>
+    <button
+      class="bg-slate-800 hover:bg-slate-700 active:bg-slate-900 rounded transition-all text-white p-3"
+      @click="$emit('click', 'hint')"
+    >
+      <div class="sr-only">Get a hint</div>
+      <LightBulbIcon class="text-white w-5 h-6" />
+    </button>
+    <button
+      class="bg-slate-800 hover:bg-slate-700 active:bg-slate-900 rounded transition-all text-white p-3"
+      @click="$emit('click', 'enter')"
+    >
+      enter
     </button>
   </div>
 </template>
