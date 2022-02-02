@@ -359,7 +359,7 @@ onMounted(async () => {
     </header>
 
     <main class="flex flex-col justify-center items-center">
-      <h1 class="mb-6 font-bold text-5xl text-gray-200">A Diction</h1>
+      <h1 class="mb-4 md:mb-6 font-bold text-2xl md:text-5xl text-gray-200">A Diction</h1>
       <div class="mb-6">
         <WordGrid
           v-for="i in MAX_ATTEMPTS"
