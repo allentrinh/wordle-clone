@@ -1,7 +1,6 @@
 <script setup>
 import { defineEmits, defineProps } from "vue";
 import keys from "../assets/data/keys.json";
-import { checkLetter } from "../modules/check-letter";
 import { LightBulbIcon } from "@heroicons/vue/solid";
 
 const props = defineProps({

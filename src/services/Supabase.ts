@@ -28,12 +28,9 @@ export const fetchHints = async () => {
     .limit(1)
     .single();
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
   // Instantiate a new instance of this user in profiles with a fresh set of hints
-  if (!data && !error) {
+  if (!data || error) {
+    console.log("instantiate hints");
     insert("profiles", {
       id: supabase.auth.user().id,
       hints: 10,
