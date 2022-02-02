@@ -8,6 +8,8 @@ import Toast from "./components/Toast.vue";
 import History from "./components/History.vue";
 import Graph from "./components/Graph.vue";
 import LoginForm from "./components/LoginForm.vue";
+import Hint from "./components/Hint.vue";
+import Button from "./components/Button.vue";
 import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
 import feedbackMessages from "./utils/feedback-messages.json";
@@ -15,6 +17,7 @@ import { ChartBarIcon, HeartIcon } from "@heroicons/vue/solid";
 import { supabase, fetchGames, insert } from "./services/Supabase";
 import { store, setHistory } from "./store";
 
+const hint = ref(null);
 const secret = ref("");
 const guesses = ref([
   {
@@ -54,6 +57,8 @@ const isDrawerVisible = ref(false);
 const isLoginVisible = ref(false);
 const isHelpVisible = ref(false);
 const isSignOutVisible = ref(false);
+const hasHint = ref(false);
+const isHintVisible = ref(false);
 const date = new Date();
 const helpTips = [
   {
@@ -108,6 +113,8 @@ const initialize = async () => {
   finished.value = false;
   lettersUsed.value = localStorage.lettersUsed ? JSON.parse(localStorage.lettersUsed) : [];
 
+  hint.value.reset();
+
   saveStep();
 };
 
@@ -129,7 +136,10 @@ const clearSteps = () => {
 
 const getSecret = () => data.data[Math.ceil(Math.random() * data.data.length)];
 
-const getAHint = () => alert("get a hint");
+const getAHint = () => {
+  hasHint.value = true;
+  isHintVisible.value = true;
+};
 
 const submitKey = (key) => {
   if (finished.value) {
@@ -146,6 +156,7 @@ const submitKey = (key) => {
       break;
     case "hint":
       getAHint();
+      break;
     default:
       appendLetter(key);
   }
@@ -433,16 +444,21 @@ onMounted(async () => {
           >
             Cancel
           </button>
-          <button
-            class="text-white font-semibold py-1 px-4 mr-1 rounded-full bg-cyan-700 hover:bg-cyan-600 active:bg-cyan-800 transition-all"
+          <Button
             @click="
               isSignOutVisible = false;
               signOut();
             "
           >
             Yes, sign out
-          </button>
+          </Button>
         </div>
+      </template>
+    </Modal>
+
+    <Modal :visible="isHintVisible" size="sm" @close="isHintVisible = false">
+      <template v-slot:body>
+        <Hint ref="hint" :letters-used="lettersUsed" :secret="secret" />
       </template>
     </Modal>
   </div>
