@@ -1,6 +1,9 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { store } from "../store";
+import { update } from "../services/Supabase";
 import Button from "./Button.vue";
+import { C } from "../../dist/assets/vendor.b28e34ea";
 const position = ref(0);
 const isHintTriggered = ref(false);
 const isLetterVisible = ref(false);
@@ -20,6 +23,7 @@ const reset = () => {
   position.value = 0;
   isHintTriggered.value = false;
   isLetterVisible.value = false;
+  localStorage.removeItem("hint");
 };
 
 const getRandomNumber = (max) => Math.floor(Math.random() * max);
@@ -40,12 +44,34 @@ const triggerHint = () => {
     const index = possibleLetters.indexOf(givenLetter);
     position.value = index;
     isLetterVisible.value = true;
+
+    store.hints--;
+    update("profiles", { id: store.user.id }, { hints: store.hints });
+    localStorage.hint = JSON.stringify({
+      isHintTriggered: isHintTriggered.value,
+      position: position.value,
+      isLetterVisible: isLetterVisible.value,
+    });
   }, 3000);
 };
+
+const hintsTooltip = computed(() => {
+  if (!store.hints) return "You don't have anymore hints left!";
+  return `You have <strong class="font-bold">${store.hints}</strong> hint${store.hints > 1 ? "s" : ""} left!`;
+});
 
 defineExpose({
   reset,
   isHintTriggered,
+});
+
+onMounted(() => {
+  if (localStorage.hint) {
+    const storage = JSON.parse(localStorage.hint);
+    isHintTriggered.value = storage.isHintTriggered;
+    position.value = storage.position;
+    isLetterVisible.value = storage.isLetterVisible;
+  }
 });
 </script>
 
@@ -63,9 +89,9 @@ defineExpose({
         {{ isLetterVisible && position === i - 1 ? secret[position] : "" }}
       </span>
     </div>
-    <div class="flex justify-between items-center h-10">
-      <p class="text-sm text-white">You have 10 hints left</p>
-      <Button v-if="!isHintTriggered" @click="triggerHint()">Give me a hint</Button>
+    <div class="flex justify-between items-center pt-4">
+      <p class="text-sm text-white" v-html="hintsTooltip"></p>
+      <Button v-if="!isHintTriggered && store.hints > 0" @click="triggerHint()">Give me a hint</Button>
     </div>
   </div>
 </template>

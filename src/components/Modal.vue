@@ -12,6 +12,8 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 window.addEventListener("keydown", (event) => {
+  if (!event || typeof event.key === "undefined") return;
+
   const key = event.key.toLowerCase();
 
   if (key !== "escape") return;

@@ -13,8 +13,8 @@ import Button from "./components/Button.vue";
 import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
 import feedbackMessages from "./utils/feedback-messages.json";
-import { ChartBarIcon, HeartIcon } from "@heroicons/vue/solid";
-import { supabase, fetchGames, insert } from "./services/Supabase";
+import { ChartBarIcon, HeartIcon, LightBulbIcon } from "@heroicons/vue/solid";
+import { supabase, fetchGames, insert, fetchHints, update } from "./services/Supabase";
 import { store, setHistory } from "./store";
 
 const hint = ref(null);
@@ -77,8 +77,11 @@ const helpTips = [
     tip: "This letter not in the word",
   },
 ];
+const isHintMessageVisible = ref(false);
 
 const initialize = async () => {
+  if (finished.value && hint.value) hint.value.reset();
+
   secret.value = localStorage.secret ? atob(localStorage.secret) : getSecret();
   guesses.value = localStorage.guesses
     ? JSON.parse(localStorage.guesses)
@@ -112,8 +115,6 @@ const initialize = async () => {
   attempts.value = localStorage.attempts || 0;
   finished.value = false;
   lettersUsed.value = localStorage.lettersUsed ? JSON.parse(localStorage.lettersUsed) : [];
-
-  hint.value.reset();
 
   saveStep();
 };
@@ -171,6 +172,8 @@ const deleteCharacter = () => {
 };
 
 const isValidWord = async (word) => {
+  if (data.data.includes(word)) return true;
+
   const endpoint = "https://www.merriam-webster.com/dictionary";
   const response = await fetch(`${endpoint}/${word}`);
   return response.status === 200;
@@ -190,9 +193,9 @@ const triggerToast = (payload: { message: string; type: string }) => {
 };
 
 const addToHistory = (value) => {
-  store.history.unshift(value);
+  store.history.unshift({ ...value, hint_used: hint.value.isHintTriggered });
   if (store.user) {
-    insert("games", { ...value, user_id: store.user.id });
+    insert("games", { ...value, user_id: store.user.id, hint_used: hint.value.isHintTriggered });
   }
 };
 
@@ -239,7 +242,13 @@ const submitWord = async () => {
     });
     clearSteps();
     if (solved) {
-      triggerToast({ message: feedbackMessages.successMessages.correctWord, type: "success" });
+      let appendMessage = "";
+      if (attempts.value <= 3 && !hint.isHintTriggered) {
+        store.hints++;
+        update("profiles", { id: store.user.id }, { hints: store.hints });
+        appendMessage = "And you scored a hint!";
+      }
+      triggerToast({ message: `${feedbackMessages.successMessages.correctWord} ${appendMessage}`, type: "success" });
     } else {
       triggerToast({ message: `The word was ${secret.value.toUpperCase()}`, type: "danger" });
     }
@@ -296,16 +305,24 @@ const clearHistory = () => (store.history = []);
 const signOut = async () => {
   await supabase.auth.signOut();
   store.user = null;
+  localStorage.removeItem("supabase.auth.token");
   clearHistory();
   clearSteps();
   triggerToast({ message: "Have a good one!", type: "success" });
 };
 
+const disableFeatureMessage = () => {
+  isHintMessageVisible.value = false;
+  localStorage.feature = false;
+};
+
 onMounted(async () => {
   await initialize();
   store.user = supabase.auth.user();
+  store.hints = await fetchHints();
   const games = await fetchGames();
   setHistory(games);
+  if (!localStorage.feature) isHintMessageVisible.value = true;
 });
 </script>
 
@@ -320,7 +337,7 @@ onMounted(async () => {
       </button>
       <div class="flex justify-between items-center">
         <button
-          v-if="!store.user"
+          v-if="!store.user || Object.keys(store.user).length === 0"
           class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
           @click="isLoginVisible = true"
         >
@@ -427,6 +444,13 @@ onMounted(async () => {
             </p>
           </div>
         </div>
+
+        <p class="text-white mb-4">
+          If you get stuck and need a hint, try pressing the <LightBulbIcon class="h-5 w-5 text-white inline" />
+          <span class="sr-only">lightbulb</span> icon! Earn hints by solving words without the use of hints in 3 turns
+          or less!
+        </p>
+        <p class="text-white mb-4">One hint per word!</p>
         <p class="text-white mb-4">Have fun!</p>
       </template>
     </Modal>
@@ -458,7 +482,36 @@ onMounted(async () => {
 
     <Modal :visible="isHintVisible" size="sm" @close="isHintVisible = false">
       <template v-slot:body>
-        <Hint ref="hint" :letters-used="lettersUsed" :secret="secret" />
+        <Hint v-if="store.user" ref="hint" :letters-used="lettersUsed" :secret="secret" />
+        <div v-else>
+          <h2 class="text-white font-bold text-xl mb-4 flex items-end">You must login to gain access to hints</h2>
+          <div class="flex justify-end">
+            <Button type="ghost" @click="isHintVisible = false">Cancel</Button>
+            <Button
+              @click="
+                isHintVisible = false;
+                isLoginVisible = true;
+              "
+              >Login now</Button
+            >
+          </div>
+        </div>
+      </template>
+    </Modal>
+
+    <Modal :visible="isHintMessageVisible" size="sm" @close="isHintMessageVisible = false">
+      <template v-slot:header>
+        <h2 class="text-white font-bold text-xl mb-4 flex items-end">Hints are here!</h2>
+      </template>
+      <template v-slot:body>
+        <p class="text-white">
+          Check your keyboard for a new hint feature! Login to take advantage of hints for those super tricky words!
+        </p>
+      </template>
+      <template v-slot:footer>
+        <div class="pt-4 text-right">
+          <Button @click="disableFeatureMessage()">Got it, thanks! Don't show again</Button>
+        </div>
       </template>
     </Modal>
   </div>

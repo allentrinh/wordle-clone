@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { store } from "../store";
+import { LightBulbIcon } from "@heroicons/vue/solid";
 
 const pages = ref(1);
 const itemsPerPage = 5;
@@ -27,8 +28,11 @@ const items = computed(() => {
       class="flex justify-between items-center w-full rounded mb-1 px-2"
       :class="{ 'bg-red-200': !item.solved, 'bg-green-200': item.solved }"
     >
-      <p class="py-1 px-2 font-semibold" :class="{ 'text-red-900': !item.solved, 'text-green-900': item.solved }">
-        {{ item.word.toUpperCase() }}
+      <p
+        class="py-1 px-2 font-semibold flex items-center"
+        :class="{ 'text-red-900': !item.solved, 'text-green-900': item.solved }"
+      >
+        <LightBulbIcon v-if="item.hint_used" class="w-4 h-4 mr-2" /> {{ item.word.toUpperCase() }}
       </p>
       <p class="py-1 px-2 font-semibold" :class="{ 'text-red-900': !item.solved, 'text-green-900': item.solved }">
         {{ item.attempts > 1 ? `${item.attempts} guesses` : `1 guess!` }}

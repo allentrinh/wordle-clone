@@ -1,11 +1,10 @@
 <script setup>
 import { ref, watch } from "vue";
-import { UserAddIcon, ExclamationCircleIcon } from "@heroicons/vue/solid";
-import { supabase, fetchGames, hintSetup } from "../services/Supabase";
+import { UserAddIcon } from "@heroicons/vue/solid";
+import { supabase, fetchGames, fetchHints } from "../services/Supabase";
 import { store, setHistory } from "../store";
 import feedbackMessages from "../utils/feedback-messages.json";
 import Button from "./Button.vue";
-import { C } from "../../dist/assets/vendor.b28e34ea";
 
 const form = ref({
   email: "",
@@ -17,7 +16,6 @@ const shouldCreateAccount = ref(false);
 const errorMessage = ref("");
 
 watch(form, (form, prev) => {
-  console.log({ form, prev });
   errorMessage.value = "";
 });
 
@@ -33,10 +31,9 @@ const signIn = async () => {
       setHistory(games);
       emit("toast", { message: "You're logged in!", type: "success" });
       emit("close");
+      store.hints = await fetchHints();
     } else {
       emit("toast", { message: error.message, type: "danger" });
-      console.log("should get hints?");
-      hintSetup();
     }
   } catch (error) {
     console.error(error);
