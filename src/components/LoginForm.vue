@@ -1,9 +1,11 @@
 <script setup>
 import { ref, watch } from "vue";
 import { UserAddIcon, ExclamationCircleIcon } from "@heroicons/vue/solid";
-import { supabase, fetchGames } from "../services/Supabase";
+import { supabase, fetchGames, hintSetup } from "../services/Supabase";
 import { store, setHistory } from "../store";
 import feedbackMessages from "../utils/feedback-messages.json";
+import Button from "./Button.vue";
+import { C } from "../../dist/assets/vendor.b28e34ea";
 
 const form = ref({
   email: "",
@@ -33,6 +35,8 @@ const signIn = async () => {
       emit("close");
     } else {
       emit("toast", { message: error.message, type: "danger" });
+      console.log("should get hints?");
+      hintSetup();
     }
   } catch (error) {
     console.error(error);
@@ -118,12 +122,9 @@ const emit = defineEmits(["close", "toast"]);
         </template>
       </fieldset>
       <div class="flex justify-between">
-        <button
-          class="text-white font-semibold py-2 px-6 mr-1 rounded-full bg-cyan-700 hover:bg-cyan-600 active:bg-cyan-800 transition-all"
-          type="submit"
-        >
+        <Button type="submit">
           {{ shouldCreateAccount ? "Sign up" : "Login" }}
-        </button>
+        </Button>
         <button type="button" class="text-white hover:underline" :disabled="isLoading" @click="toggleCreateAccount()">
           {{ shouldCreateAccount ? "Go back to login" : "Don't have an account? Sign up!" }}
         </button>

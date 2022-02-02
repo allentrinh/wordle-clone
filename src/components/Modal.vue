@@ -29,9 +29,13 @@ window.addEventListener("keydown", (event) => {
     <div class="sr-only">Close modal</div>
   </button>
   <div
-    v-if="props.visible"
-    class="fixed rounded top-1/2 left-1/2 shadow-md bg-slate-800 py-8 px-6 w-full h-auto -translate-x-1/2 -translate-y-1/2"
-    :class="`max-w-${props.size}`"
+    class="fixed rounded top-1/2 left-1/2 shadow-md bg-slate-800 py-8 px-6 w-full h-auto -translate-x-1/2 -translate-y-1/2 transition-all"
+    :class="[
+      `max-w-${props.size}`,
+      {
+        'translate-y-4 opacity-0 pointer-events-none': !visible,
+      },
+    ]"
   >
     <button class="absolute top-2 right-4 text-3xl text-white" @click="emit('close')">
       <span class="sr-only">Close drawer</span>
