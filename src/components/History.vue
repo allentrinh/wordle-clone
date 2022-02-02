@@ -40,18 +40,18 @@ const items = computed(() => {
     </div>
     <div class="flex gap-2 py-2">
       <button
-        v-if="items.length < store.history.length"
-        class="rounded bg-cyan-600 text-white font-semibold uppercase py-2 px-6 grow"
-        @click="pages++"
-      >
-        Load more
-      </button>
-      <button
         v-if="items.length > 5"
         class="rounded border border-white text-white font-semibold uppercase py-2 px-6 grow"
         @click="pages = 1"
       >
         Show less
+      </button>
+      <button
+        v-if="items.length < store.history.length"
+        class="rounded bg-cyan-600 text-white font-semibold uppercase py-2 px-6 grow"
+        @click="pages++"
+      >
+        Load more
       </button>
     </div>
   </div>

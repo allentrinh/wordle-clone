@@ -3,7 +3,6 @@ import { ref, computed, onMounted } from "vue";
 import { store } from "../store";
 import { update } from "../services/Supabase";
 import Button from "./Button.vue";
-import { C } from "../../dist/assets/vendor.b28e34ea";
 const position = ref(0);
 const isHintTriggered = ref(false);
 const isLetterVisible = ref(false);
