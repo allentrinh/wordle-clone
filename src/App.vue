@@ -328,7 +328,7 @@ onMounted(async () => {
 
 <template>
   <div class="flex flex-col justify-between items-center min-h-screen w-screen bg-slate-900">
-    <header class="flex justify-between items-center w-full py-4 px-6">
+    <header class="flex justify-between items-center w-full py-2 md:py-4 px-2">
       <button
         class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
         @click="isHelpVisible = true"
@@ -358,7 +358,7 @@ onMounted(async () => {
       </div>
     </header>
 
-    <main class="flex flex-col justify-center items-center">
+    <main class="flex flex-col justify-center items-center w-full">
       <h1 class="mb-2 md:mb-6 font-bold text-2xl md:text-5xl text-gray-200">A Diction</h1>
       <div class="mb-2 md:mb-6">
         <WordGrid
@@ -383,7 +383,7 @@ onMounted(async () => {
       </button>
     </main>
 
-    <footer class="py-4 px-6 flex flex-col items-center">
+    <footer class="py-2 md:py-4 px-6 flex flex-col items-center">
       <p class="text-white">
         &copy; {{ date.getFullYear() }} - Made with love by
         <a href="https://allentrinh.com" class="underline" target="_blank">Allen Trinh</a>
