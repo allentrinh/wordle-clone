@@ -23,7 +23,7 @@ export const upsert = async (table: string, payload: object) => {
 };
 
 export const fetchHints = async (id?: string) => {
-  const userId = id ? id : supabase.auth.user().id;
+  const userId = id ? id : supabase.auth.user()?.id;
   if (!userId) return 0;
 
   const { data, error } = await supabase.from("profiles").select("hints").eq("id", userId).limit(1).single();

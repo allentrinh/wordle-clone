@@ -77,7 +77,7 @@ const helpTips = [
     tip: "This letter not in the word",
   },
 ];
-const isHintMessageVisible = ref(false);
+const isFeatureMessageVisible = ref(false);
 
 const initialize = async () => {
   if (finished.value && hint.value) hint.value.reset();
@@ -316,7 +316,7 @@ const signOut = async () => {
 };
 
 const disableFeatureMessage = () => {
-  isHintMessageVisible.value = false;
+  isFeatureMessageVisible.value = false;
   localStorage.feature = false;
 };
 
@@ -326,7 +326,7 @@ onMounted(async () => {
   store.hints = await fetchHints();
   const games = await fetchGames();
   setHistory(games);
-  if (!localStorage.feature) isHintMessageVisible.value = true;
+  if (!localStorage.feature) isFeatureMessageVisible.value = true;
 });
 </script>
 
@@ -509,7 +509,7 @@ onMounted(async () => {
       </template>
     </Modal>
 
-    <Modal :visible="isHintMessageVisible" size="sm" @close="isHintMessageVisible = false">
+    <Modal :visible="isFeatureMessageVisible" size="sm" @close="isFeatureMessageVisible = false">
       <template v-slot:header>
         <h2 class="text-white font-bold text-xl mb-4 flex items-end">Hints are here!</h2>
       </template>
