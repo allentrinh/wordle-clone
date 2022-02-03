@@ -212,6 +212,10 @@ const addToLettersUsed = () => {
   });
 };
 
+const addHintToLettersUsed = (payload) => {
+  lettersUsed.value = [...lettersUsed.value, payload];
+};
+
 const submitWord = async () => {
   if (word.value.length !== 5) {
     triggerToast({ message: feedbackMessages.errorMessages.invalidLength, type: "warning" });
@@ -482,7 +486,13 @@ onMounted(async () => {
 
     <Modal :visible="isHintVisible" size="sm" @close="isHintVisible = false">
       <template v-slot:body>
-        <Hint v-if="store.user" ref="hint" :letters-used="lettersUsed" :secret="secret" />
+        <Hint
+          v-if="store.user"
+          ref="hint"
+          :letters-used="lettersUsed"
+          :secret="secret"
+          @hinted="addHintToLettersUsed"
+        />
         <div v-else>
           <h2 class="text-white font-bold text-xl mb-4 flex items-end">You must login to gain access to hints</h2>
           <div class="flex justify-end">

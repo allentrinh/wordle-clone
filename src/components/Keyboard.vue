@@ -5,6 +5,7 @@ import { LightBulbIcon } from "@heroicons/vue/solid";
 
 const props = defineProps({
   lettersUsed: Array,
+  hinted: Boolean,
 });
 
 const keyClass = (key) => {
@@ -12,6 +13,9 @@ const keyClass = (key) => {
   if (typeof letter === "undefined") return "bg-slate-800 hover:bg-slate-700 active:bg-slate-900";
 
   switch (letter.status) {
+    case 3:
+      return "bg-rose-500 text-white";
+
     case 2:
       return "bg-green-500 text-black";
 
@@ -50,7 +54,7 @@ const emit = defineEmits(["click"]);
       @click="$emit('click', 'hint')"
     >
       <div class="sr-only">Get a hint</div>
-      <LightBulbIcon class="text-white w-5 h-6" />
+      <LightBulbIcon class="w-5 h-6" :class="{ 'text-yellow-500': props.hinted }" />
     </button>
     <button
       class="bg-slate-800 hover:bg-slate-700 active:bg-slate-900 rounded transition-all text-white p-3"
