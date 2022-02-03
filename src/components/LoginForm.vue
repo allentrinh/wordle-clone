@@ -52,6 +52,7 @@ const signUp = async () => {
       password: form.value.password,
     });
     store.user = user;
+    store.hints = 10; // init 10 hints
     if (!error) {
       emit("close");
       emit("toast", { message: "Thanks for signing up! Don't forget to confirm your email.", type: "success" });
