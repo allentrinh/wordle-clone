@@ -243,7 +243,7 @@ const submitWord = async () => {
     clearSteps();
     if (solved) {
       let appendMessage = "";
-      if (attempts.value <= 3 && !hint.isHintTriggered) {
+      if (attempts.value <= 3 && !hint.value.isHintTriggered) {
         store.hints++;
         upsert("profiles", { id: store.user.id, hints: store.hints });
         appendMessage = "And you scored a hint!";
@@ -328,6 +328,7 @@ onMounted(async () => {
 
 <template>
   <div class="flex flex-col justify-between items-center min-h-screen w-screen bg-slate-900">
+    {{ secret }}
     <header class="flex justify-between items-center w-full py-2 md:py-4 px-2 md:px-6">
       <button
         class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
