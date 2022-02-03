@@ -51,14 +51,13 @@ const signUp = async () => {
       email: form.value.email,
       password: form.value.password,
     });
-    store.user = user;
-    store.hints = await fetchHints(user.id);
-    console.log(store.hints);
-    await upsert("profiles", { id: store.user.id, hints: store.hints });
 
     if (!error) {
       emit("close");
-      emit("toast", { message: "Thanks for signing up! Don't forget to confirm your email.", type: "success" });
+      emit("toast", {
+        message: "Thanks for signing up! Don't forget to confirm your email before logging in!",
+        type: "success",
+      });
     }
   } catch (error) {
     console.error(error);
