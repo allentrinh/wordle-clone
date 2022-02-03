@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { store } from "../store";
-import { update } from "../services/Supabase";
+import { upsert } from "../services/Supabase";
 import Button from "./Button.vue";
 const position = ref(0);
 const isHintTriggered = ref(false);
@@ -34,7 +34,7 @@ const triggerHint = () => {
     position.value = getRandomNumber(5);
   }, 100);
 
-  setTimeout(() => {
+  setTimeout(async () => {
     clearInterval(interval);
     const possibleLetters = props.secret.split("");
     const lettersUsed = props.lettersUsed.map((letter) => letter.letter);
@@ -45,7 +45,7 @@ const triggerHint = () => {
     isLetterVisible.value = true;
 
     store.hints--;
-    update("profiles", { id: store.user.id }, { hints: store.hints });
+    await upsert("profiles", { id: store.user.id, hints: store.hints });
     localStorage.hint = JSON.stringify({
       isHintTriggered: isHintTriggered.value,
       position: position.value,

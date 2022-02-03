@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { UserAddIcon } from "@heroicons/vue/solid";
-import { supabase, fetchGames, fetchHints } from "../services/Supabase";
+import { supabase, fetchGames, fetchHints, upsert } from "../services/Supabase";
 import { store, setHistory } from "../store";
 import feedbackMessages from "../utils/feedback-messages.json";
 import Button from "./Button.vue";
@@ -52,7 +52,10 @@ const signUp = async () => {
       password: form.value.password,
     });
     store.user = user;
-    store.hints = 10; // init 10 hints
+    store.hints = await fetchHints(user.id);
+    console.log(store.hints);
+    await upsert("profiles", { id: store.user.id, hints: store.hints });
+
     if (!error) {
       emit("close");
       emit("toast", { message: "Thanks for signing up! Don't forget to confirm your email.", type: "success" });

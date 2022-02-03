@@ -14,7 +14,7 @@ import data from "./assets/data/words.json";
 import { checkLetter } from "./modules/check-letter";
 import feedbackMessages from "./utils/feedback-messages.json";
 import { ChartBarIcon, HeartIcon, LightBulbIcon } from "@heroicons/vue/solid";
-import { supabase, fetchGames, insert, fetchHints, update } from "./services/Supabase";
+import { supabase, fetchGames, insert, fetchHints, upsert } from "./services/Supabase";
 import { store, setHistory } from "./store";
 
 const hint = ref(null);
@@ -245,7 +245,7 @@ const submitWord = async () => {
       let appendMessage = "";
       if (attempts.value <= 3 && !hint.isHintTriggered) {
         store.hints++;
-        update("profiles", { id: store.user.id }, { hints: store.hints });
+        upsert("profiles", { id: store.user.id, hints: store.hints });
         appendMessage = "And you scored a hint!";
       }
       triggerToast({ message: `${feedbackMessages.successMessages.correctWord} ${appendMessage}`, type: "success" });
@@ -328,6 +328,8 @@ onMounted(async () => {
 
 <template>
   <div class="flex flex-col justify-between items-center min-h-screen w-screen bg-slate-900">
+    {{ store.user }}
+    {{ store.hints }}
     <header class="flex justify-between items-center w-full py-2 md:py-4 px-2 md:px-6">
       <button
         class="text-white font-semibold py-1 px-4 mr-1 rounded-full hover:bg-slate-700 transition-all"
