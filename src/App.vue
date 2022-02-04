@@ -214,6 +214,7 @@ const addToLettersUsed = () => {
 
 const addHintToLettersUsed = (payload) => {
   lettersUsed.value = [...lettersUsed.value, payload];
+  saveStep();
 };
 
 const submitWord = async () => {
@@ -424,7 +425,14 @@ onMounted(async () => {
 
     <Modal :visible="isLoginVisible" @close="isLoginVisible = false">
       <template v-slot:body>
-        <LoginForm @close="isLoginVisible = false" @toast="triggerToast" />
+        <LoginForm
+          @close="isLoginVisible = false"
+          @toast="triggerToast"
+          @logged-in="
+            clearSteps();
+            initialize();
+          "
+        />
       </template>
     </Modal>
 

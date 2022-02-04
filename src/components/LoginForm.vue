@@ -30,6 +30,7 @@ const signIn = async () => {
       const games = await fetchGames();
       setHistory(games);
       emit("toast", { message: "You're logged in!", type: "success" });
+      emit("logged-in");
       emit("close");
       store.hints = await fetchHints();
     } else {
@@ -80,7 +81,7 @@ const toggleCreateAccount = () => {
   shouldCreateAccount.value = !shouldCreateAccount.value;
 };
 
-const emit = defineEmits(["close", "toast"]);
+const emit = defineEmits(["close", "toast", "logged-in"]);
 </script>
 
 <template>
