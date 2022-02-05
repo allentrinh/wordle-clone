@@ -58,7 +58,7 @@ const triggerHint = () => {
 
 const hintsTooltip = computed(() => {
   if (!store.hints) return "You don't have anymore hints left!";
-  return `You have <strong class="font-bold">${store.hints}</strong> hint${store.hints > 1 ? "s" : ""} left!`;
+  return `You have <strong>${store.hints}</strong> hint${store.hints > 1 ? "s" : ""} left!`;
 });
 
 const emit = defineEmits(["hinted"]);

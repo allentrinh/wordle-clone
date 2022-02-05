@@ -340,7 +340,6 @@ onMounted(async () => {
       >
         How to play
       </button>
-      <h1 class="font-bold md:text-3xl text-gray-200">A Diction</h1>
       <div class="flex justify-between items-center">
         <button
           v-if="!store.user || Object.keys(store.user).length === 0"
@@ -442,7 +441,7 @@ onMounted(async () => {
       </template>
 
       <template v-slot:body>
-        <p class="text-white mb-4">A super simple and casual game!</p>
+        <p class="text-white mb-4">Welcome to <strong>A Diction</strong>, a super simple and casual game!</p>
         <p class="text-white mb-4">You have 6 attempts to guess the word correctly.</p>
         <p class="text-white mb-4">
           Each attempt must have 5 letters. Hit the enter button to see if you got it right!
