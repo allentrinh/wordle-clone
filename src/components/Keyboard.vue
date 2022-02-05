@@ -64,3 +64,9 @@ const emit = defineEmits(["click"]);
     </button>
   </div>
 </template>
+
+<style scoped>
+button {
+  touch-action: manipulation;
+}
+</style>
