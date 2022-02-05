@@ -340,6 +340,7 @@ onMounted(async () => {
       >
         How to play
       </button>
+      <h1 class="font-bold md:text-3xl text-gray-200">A Diction</h1>
       <div class="flex justify-between items-center">
         <button
           v-if="!store.user || Object.keys(store.user).length === 0"
@@ -364,7 +365,6 @@ onMounted(async () => {
     </header>
 
     <main class="flex flex-col justify-center items-center w-full">
-      <h1 class="mb-2 md:mb-6 font-bold text-2xl md:text-5xl text-gray-200">A Diction</h1>
       <div class="mb-2 md:mb-6">
         <WordGrid
           v-for="i in MAX_ATTEMPTS"
