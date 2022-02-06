@@ -6,6 +6,8 @@ import Button from "./Button.vue";
 const position = ref(0);
 const isHintTriggered = ref(false);
 const isLetterVisible = ref(false);
+const isProcessing = ref(false);
+const givenLetter = ref("");
 
 const props = defineProps({
   secret: String,
@@ -29,6 +31,7 @@ const getRandomNumber = (max) => Math.floor(Math.random() * max);
 
 const triggerHint = () => {
   isHintTriggered.value = true;
+  isProcessing.value = true;
   // Box animation
   const interval = setInterval(() => {
     position.value = getRandomNumber(5);
@@ -36,11 +39,12 @@ const triggerHint = () => {
 
   setTimeout(async () => {
     clearInterval(interval);
+    isProcessing.value = false;
     const possibleLetters = props.secret.split("");
     const lettersUsed = props.lettersUsed.map((letter) => letter.letter);
     const unusedLetters = possibleLetters.filter((letter) => !lettersUsed.includes(letter));
-    const givenLetter = unusedLetters[getRandomNumber(unusedLetters.length)];
-    const index = possibleLetters.indexOf(givenLetter);
+    givenLetter.value = unusedLetters[getRandomNumber(unusedLetters.length)];
+    const index = possibleLetters.indexOf(givenLetter.value);
     position.value = index;
     isLetterVisible.value = true;
 
@@ -85,12 +89,14 @@ onMounted(() => {
     </h2>
     <div class="flex gap-2 mb-2">
       <span
+        v-if="!isHintTriggered || isProcessing || givenLetter"
         v-for="i in 5"
         class="flex justify-center items-center border border-gray-700 h-10 w-10 uppercase text-xl font-semibold transition-all"
         :class="backgroundClass(i - 1)"
       >
         {{ isLetterVisible && position === i - 1 ? secret[position] : "" }}
       </span>
+      <p v-else class="text-white">You have all the letters you need!</p>
     </div>
     <div class="flex justify-between items-center pt-4">
       <p class="text-sm text-white" v-html="hintsTooltip"></p>
